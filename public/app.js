@@ -67,7 +67,7 @@ function handleServerEvent(event) {
       event_id: openingEventId,
       delegation_id: null,
       content:
-        "Привет! Я Стадимейт — виртуальный ученик. Хочешь узнать о проекте или объяснить мне какую-нибудь тему простыми словами?",
+        "Привет! Я Стади, маскот StudyMate. Я тут рассказываю про проект и про то, как можно готовиться к экзаменам эффективнее. Ты сам сейчас к чему-нибудь готовишься?",
     });
 
     maxSessionTimeout = window.setTimeout(() => endConversation(), 3 * 60 * 1000);
