@@ -1,0 +1,251 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(157, 131, 255, 0.26), transparent 31%),
+    radial-gradient(circle at 83% 78%, rgba(81, 200, 230, 0.22), transparent 33%),
+    linear-gradient(145deg, #faf9ff 0%, #f0edff 52%, #eef8ff 100%);
+}
+
+body::before,
+body::after {
+  position: fixed;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+body::before {
+  top: -22vmin;
+  right: -15vmin;
+  width: 58vmin;
+  height: 58vmin;
+  border: clamp(28px, 5vmin, 76px) solid rgba(123, 92, 246, 0.07);
+}
+
+body::after {
+  bottom: -28vmin;
+  left: -19vmin;
+  width: 68vmin;
+  height: 68vmin;
+  border: clamp(34px, 6vmin, 90px) solid rgba(59, 190, 219, 0.07);
+}
+
+.microphone-button {
+  --surface: #7657f6;
+  --surface-deep: #5130d4;
+  --halo: rgba(102, 72, 232, 0.22);
+  --ring: rgba(102, 72, 232, 0.14);
+  position: relative;
+  display: grid;
+  width: clamp(190px, 28vmin, 310px);
+  aspect-ratio: 1;
+  padding: 0;
+  place-items: center;
+  overflow: visible;
+  border: clamp(5px, 0.75vmin, 9px) solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  touch-action: manipulation;
+  background:
+    radial-gradient(circle at 34% 27%, rgba(255, 255, 255, 0.34), transparent 31%),
+    linear-gradient(145deg, var(--surface), var(--surface-deep));
+  box-shadow:
+    0 0 0 clamp(13px, 1.7vmin, 21px) rgba(255, 255, 255, 0.72),
+    0 0 0 clamp(15px, 2vmin, 25px) var(--ring),
+    0 clamp(24px, 4vmin, 46px) clamp(45px, 7vmin, 82px) var(--halo),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -8px 20px rgba(30, 12, 106, 0.2);
+  transition:
+    transform 180ms ease,
+    box-shadow 320ms ease,
+    background 320ms ease,
+    filter 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.microphone-button::before,
+.microphone-button::after {
+  position: absolute;
+  z-index: -1;
+  width: 126%;
+  aspect-ratio: 1;
+  content: "";
+  pointer-events: none;
+  border: 2px solid var(--ring);
+  border-radius: 50%;
+}
+
+.microphone-button::after {
+  width: 151%;
+  border-width: 1px;
+  opacity: 0.68;
+}
+
+.microphone-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.025);
+  box-shadow:
+    0 0 0 clamp(13px, 1.7vmin, 21px) rgba(255, 255, 255, 0.78),
+    0 0 0 clamp(15px, 2vmin, 25px) var(--ring),
+    0 clamp(28px, 4.5vmin, 52px) clamp(50px, 8vmin, 94px) var(--halo),
+    inset 0 1px 1px rgba(255, 255, 255, 0.58),
+    inset 0 -8px 20px rgba(30, 12, 106, 0.2);
+}
+
+.microphone-button:active:not(:disabled) {
+  transform: scale(0.965);
+  filter: brightness(0.96);
+}
+
+.microphone-button:focus-visible {
+  outline: 4px solid #2d1d76;
+  outline-offset: clamp(18px, 2.4vmin, 28px);
+}
+
+.microphone-button:disabled {
+  cursor: wait;
+}
+
+.microphone-icon {
+  position: relative;
+  display: block;
+  width: 26%;
+  height: 40%;
+  border: clamp(8px, 1.25vmin, 13px) solid currentColor;
+  border-radius: 999px;
+  filter: drop-shadow(0 9px 13px rgba(25, 8, 82, 0.22));
+}
+
+.microphone-icon::before {
+  position: absolute;
+  left: 50%;
+  bottom: -43%;
+  width: 172%;
+  height: 76%;
+  content: "";
+  border: clamp(8px, 1.25vmin, 13px) solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 999px 999px;
+  transform: translateX(-50%);
+}
+
+.microphone-icon::after {
+  position: absolute;
+  left: 50%;
+  bottom: -66%;
+  width: 116%;
+  height: clamp(8px, 1.25vmin, 13px);
+  content: "";
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 clamp(-20px, -3vmin, -31px) 0 clamp(-1px, -0.18vmin, -2px) currentColor;
+  transform: translateX(-50%);
+}
+
+.microphone-button.connecting {
+  --surface: #579cf8;
+  --surface-deep: #2867cb;
+  --halo: rgba(49, 127, 226, 0.22);
+  --ring: rgba(49, 127, 226, 0.18);
+}
+
+.microphone-button.listening {
+  --surface: #36cc98;
+  --surface-deep: #139067;
+  --halo: rgba(25, 172, 120, 0.24);
+  --ring: rgba(25, 172, 120, 0.18);
+}
+
+.microphone-button.speaking {
+  --surface: #9269fb;
+  --surface-deep: #6036dc;
+  --halo: rgba(111, 72, 232, 0.25);
+  --ring: rgba(111, 72, 232, 0.18);
+}
+
+.microphone-button.closing {
+  --surface: #84909e;
+  --surface-deep: #515b68;
+  --halo: rgba(78, 91, 106, 0.18);
+  --ring: rgba(78, 91, 106, 0.14);
+}
+
+.microphone-button.error {
+  --surface: #ef6474;
+  --surface-deep: #bc304d;
+  --halo: rgba(214, 48, 78, 0.22);
+  --ring: rgba(214, 48, 78, 0.17);
+}
+
+.microphone-button.connecting::before,
+.microphone-button.connecting::after,
+.microphone-button.listening::before,
+.microphone-button.speaking::before {
+  animation: pulse 1.65s ease-out infinite;
+}
+
+.microphone-button.connecting::after,
+.microphone-button.listening::after {
+  animation-delay: 0.55s;
+}
+
+.screen-reader-only,
+audio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.78;
+    transform: scale(0.8);
+  }
+  78%,
+  100% {
+    opacity: 0;
+    transform: scale(1.22);
+  }
+}
+
+@media (max-width: 520px) {
+  .microphone-button {
+    width: min(54vw, 240px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+}

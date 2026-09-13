@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f1ff" />
+    <title>Стадимейт</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <button
+      class="microphone-button idle"
+      id="microphoneButton"
+      type="button"
+      aria-label="Начать разговор со Стадимейтом"
+    >
+      <span class="microphone-icon" aria-hidden="true"></span>
+    </button>
+
+    <p class="screen-reader-only" id="liveStatus" role="status" aria-live="polite">
+      Нажмите на микрофон, чтобы начать разговор.
+    </p>
+    <audio id="remoteAudio" autoplay></audio>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
