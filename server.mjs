@@ -35,6 +35,7 @@ app.get("/api/health", (_request, response) => {
     ok: true,
     apiKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     model: "gpt-live-1",
+    voice: "ripple",
   });
 });
 
@@ -68,6 +69,9 @@ app.post("/api/session", async (request, response) => {
         model: "gpt-live-1",
         store: false,
         instructions: liveInstructions,
+        audio: {
+          output: { voice: "ripple" },
+        },
       },
       transport: {
         type: "webrtc",
