@@ -66,8 +66,7 @@ function handleServerEvent(event) {
       type: "session.commentary.append",
       event_id: openingEventId,
       delegation_id: null,
-      content:
-        "Привет! Я Стади, маскот StudyMate. Я тут рассказываю про проект и про то, как можно готовиться к экзаменам эффективнее. Ты сам сейчас к чему-нибудь готовишься?",
+      content: "Привет, меня зовут Стадимейт, что обсудим?",
     });
 
     maxSessionTimeout = window.setTimeout(() => endConversation(), 3 * 60 * 1000);

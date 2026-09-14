@@ -43,12 +43,6 @@ const exhibitionRole = readFileSync(
   "utf8",
 ).trim();
 
-const liveInstructions = `${exhibitionRole}
-
-МАНЕРА ГОЛОСА
-
-Звучи как доброжелательный подросток: легко, живо, с мягкой и немного более высокой подачей, без взрослой дикторской манеры. Голос остаётся мужским. Не изображай маленького ребёнка.`;
-
 app.disable("x-powered-by");
 app.use(express.json({ limit: "64kb" }));
 app.use(express.static(publicDir, { extensions: ["html"] }));
@@ -90,7 +84,7 @@ app.post("/api/session", async (request, response) => {
       session: {
         model: "gpt-live-1",
         store: false,
-        instructions: liveInstructions,
+        instructions: exhibitionRole,
         audio: {
           output: { voice: "beacon" },
         },
