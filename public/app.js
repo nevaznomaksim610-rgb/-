@@ -7,13 +7,8 @@ let events = null;
 let microphone = null;
 let ready = false;
 let finalized = false;
-let micMuted = false;
-let openingEventId = null;
-let pendingMicState = null;
 let closeTimeout = null;
 let maxSessionTimeout = null;
-let longPressTimeout = null;
-let longPressTriggered = false;
 
 function setVisualState(state, description) {
   button.className = `microphone-button ${state}`;
@@ -40,31 +35,18 @@ function describeError(error) {
   return error?.message || "Не удалось начать разговор";
 }
 
-function requestMicState(muted) {
-  if (!ready || pendingMicState !== null || muted === micMuted) return;
-  pendingMicState = muted;
-  button.disabled = true;
-
-  const sent = sendEvent({
-    type: muted ? "session.input_audio.mute" : "session.input_audio.unmute",
-  });
-
-  if (!sent) {
-    pendingMicState = null;
-    button.disabled = false;
-  }
-}
-
 function handleServerEvent(event) {
   if (event.type === "session.started") {
     ready = true;
-    micMuted = false;
-    setVisualState("speaking", "Стадимейт начинает разговор. Удерживайте кнопку, чтобы завершить.");
+    button.disabled = false;
+    setVisualState(
+      "listening",
+      "Разговор начался. Говорите в любой момент. Нажмите кнопку, чтобы завершить.",
+    );
 
-    openingEventId = crypto.randomUUID();
     sendEvent({
       type: "session.commentary.append",
-      event_id: openingEventId,
+      event_id: crypto.randomUUID(),
       delegation_id: null,
       content: "Привет, меня зовут Стадимейт, что обсудим?",
     });
@@ -73,32 +55,19 @@ function handleServerEvent(event) {
     return;
   }
 
-  if (
-    event.type === "session.commentary.appended" &&
-    event.client_event_id === openingEventId
-  ) {
-    requestMicState(true);
-    return;
-  }
-
-  if (event.type === "session.input_audio.muted") {
-    pendingMicState = null;
-    micMuted = true;
-    button.disabled = false;
-    setVisualState("speaking", "Нажмите, чтобы говорить. Удерживайте кнопку, чтобы завершить.");
-    return;
-  }
-
-  if (event.type === "session.input_audio.unmuted") {
-    pendingMicState = null;
-    micMuted = false;
-    button.disabled = false;
-    setVisualState("listening", "Говорите. Нажмите ещё раз, когда закончите фразу.");
+  if (event.type === "session.input_transcript.delta") {
+    setVisualState(
+      "listening",
+      "Стадимейт слушает. Нажмите кнопку, чтобы завершить разговор.",
+    );
     return;
   }
 
   if (event.type === "session.output_transcript.delta") {
-    setVisualState("speaking", "Стадимейт отвечает. Нажмите, чтобы перебить.");
+    setVisualState(
+      "speaking",
+      "Стадимейт отвечает. Говорите, чтобы перебить, или нажмите кнопку для завершения.",
+    );
     return;
   }
 
@@ -214,7 +183,6 @@ function endConversation() {
 function cleanup(state, description) {
   window.clearTimeout(closeTimeout);
   window.clearTimeout(maxSessionTimeout);
-  window.clearTimeout(longPressTimeout);
 
   const currentEvents = events;
   const currentPeer = peer;
@@ -223,9 +191,6 @@ function cleanup(state, description) {
   peer = null;
   microphone = null;
   ready = false;
-  micMuted = false;
-  pendingMicState = null;
-  openingEventId = null;
 
   currentMicrophone?.getTracks().forEach((track) => track.stop());
   if (currentEvents?.readyState === "open") currentEvents.close();
@@ -237,29 +202,12 @@ function cleanup(state, description) {
 }
 
 button.addEventListener("click", () => {
-  if (longPressTriggered) {
-    longPressTriggered = false;
-    return;
-  }
   if (!ready) {
     startConversation();
     return;
   }
-  requestMicState(!micMuted);
+  endConversation();
 });
-
-button.addEventListener("pointerdown", () => {
-  if (!ready) return;
-  longPressTriggered = false;
-  longPressTimeout = window.setTimeout(() => {
-    longPressTriggered = true;
-    endConversation();
-  }, 1200);
-});
-
-for (const eventName of ["pointerup", "pointercancel", "pointerleave"]) {
-  button.addEventListener(eventName, () => window.clearTimeout(longPressTimeout));
-}
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") endConversation();
