@@ -15,6 +15,27 @@ const allowedOrigins = new Set([
   `http://127.0.0.1:${port}`,
 ]);
 
+function firstForwardedValue(value) {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  return typeof rawValue === "string" ? rawValue.split(",")[0].trim() : "";
+}
+
+function isAllowedRequestOrigin(request) {
+  const origin = request.headers.origin;
+  if (!origin || allowedOrigins.has(origin)) {
+    return true;
+  }
+
+  const forwardedHost = firstForwardedValue(request.headers["x-forwarded-host"]);
+  const host = forwardedHost || firstForwardedValue(request.headers.host);
+  const forwardedProtocol = firstForwardedValue(
+    request.headers["x-forwarded-proto"],
+  );
+  const protocol = forwardedProtocol || request.protocol;
+
+  return Boolean(host) && origin === `${protocol}://${host}`;
+}
+
 const app = express();
 
 const exhibitionRole = readFileSync(
@@ -42,8 +63,7 @@ app.get("/api/health", (_request, response) => {
 });
 
 app.post("/api/session", async (request, response) => {
-  const origin = request.headers.origin;
-  if (origin && !allowedOrigins.has(origin)) {
+  if (!isAllowedRequestOrigin(request)) {
     response.status(403).json({ error: "Запрос пришёл с неожиданного адреса." });
     return;
   }
@@ -99,9 +119,13 @@ app.use((_request, response) => {
   response.status(404).json({ error: "Не найдено." });
 });
 
-app.listen(port, host, () => {
-  console.log(`Стадимейт готов: http://localhost:${port}`);
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn("Внимание: OPENAI_API_KEY не задан. Добавьте его в файл .env.");
-  }
-});
+if (!process.env.VERCEL) {
+  app.listen(port, host, () => {
+    console.log(`Стадимейт готов: http://localhost:${port}`);
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn("Внимание: OPENAI_API_KEY не задан. Добавьте его в файл .env.");
+    }
+  });
+}
+
+export default app;
