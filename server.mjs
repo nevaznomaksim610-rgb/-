@@ -53,6 +53,7 @@ app.get("/api/health", (_request, response) => {
     apiKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     model: "gpt-live-1",
     voice: "beacon",
+    roleRevision: "exhibition-active-learning-v1",
   });
 });
 
